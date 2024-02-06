@@ -41,12 +41,13 @@ jobs:
                         
             gmake install
             zip -r qemu-mac-arm64.zip ./qemu
-        
+            
         - name: Upload Artifact
           uses: actions/upload-artifact@v4
           with: 
             name: mac-arm64
-            path: qemu-mac-arm64.zip
+            path: ${{ github.workspace }}/qemu-*/qemu-mac-arm64.zip
+            if-no-files-found: error
   build-linux:
     runs-on: ubuntu-latest
     steps:
@@ -84,9 +85,10 @@ jobs:
         
         - name: Upload Artifact
           uses: actions/upload-artifact@v4
-          with: 
+          with:
             name: linux-x64
-            path: qemu-linux-x64.zip
+            path: ${{ github.workspace }}/qemu-*/qemu-linux-x64.zip
+            if-no-files-found: error
 
   build-win64:
     runs-on: windows-latest
@@ -137,9 +139,10 @@ jobs:
           zip -r qemu-win-x64.zip ./qemu
       - name: Upload the artifact
         uses: actions/upload-artifact@v4
-        with: 
-          name: win64
-          path: qemu-win-x64.zip
+        with:
+            name: win-x64
+            path: ${{ github.workspace }}/qemu-*/qemu-win-x64.zip
+            if-no-files-found: error
           
   publish-release:
     needs: [build-mac, build-linux, build-win64]
