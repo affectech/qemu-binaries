@@ -1,0 +1,31 @@
+name: Check for QEMU version
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: '0 10 * * 0'
+    
+jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: turtlequeue/setup-babashka@v1.5.0
+        with:
+          babashka-version: 1.3.188
+      - run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          export QEMU_TAG="$(bb ./check_and_get_tag.clj)"
+
+          git tag -a "v${QEMU_TAG}" -m "new release!"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.BOT_TOKEN }}
+          branch: ${{ github.ref }}
