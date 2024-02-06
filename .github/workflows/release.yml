@@ -18,7 +18,7 @@ jobs:
                  jpeg-turbo libffi libgcrypt \
                  libpng libslirp libssh libusb lzo make meson \
                  nettle ninja pixman pkg-config python@3.10 \
-                 snappy spice-protocol vde zlib zstd
+                 snappy spice-protocol vde zlib zstd p7zip
         
         - name: Fetch QEMU distribution
           run: |
@@ -36,11 +36,10 @@ jobs:
                         --disable-gtk \
                         --enable-cocoa \
                         --enable-capstone \
-                        --enable-libssh \
-                        --enable-zstd
+                        --enable-strip
                         
             gmake install
-            zip -r qemu-mac-arm64.zip ./qemu
+            7z a qemu-mac-arm64.zip ./qemu
             
         - name: Upload Artifact
           uses: actions/upload-artifact@v4
@@ -60,7 +59,7 @@ jobs:
                              librbd-dev librdmacm-dev \
                              libsasl2-dev libsdl2-dev libseccomp-dev libsnappy-dev libssh-dev \
                              libvde-dev libvdeplug-dev libvte-2.91-dev libxen-dev liblzo2-dev \
-                             libnfs-dev libiscsi-dev libzstd-dev
+                             libnfs-dev libiscsi-dev libzstd-dev p7zip-full
         
         - name: Fetch QEMU distribution
           run: |
@@ -70,19 +69,14 @@ jobs:
           run: |
             cd qemu-${GITHUB_REF_NAME#"v"}
             ./configure --prefix=$(pwd)/qemu \
-                        --disable-bsd-user \
                         --disable-guest-agent \
                         --enable-gtk \
                         --enable-capstone \
-                        --enable-curses \
-                        --enable-fdt=system \
-                        --enable-libssh \
-                        --enable-vde \
                         --enable-zstd \
-                        --extra-cflags=-DNCURSES_WIDECHAR=1
+                        --enable-strip
+                        
             make install
-            zip -r qemu-linux-x64.zip ./qemu
-        
+            7z a qemu-linux-x64.zip ./qemu
         - name: Upload Artifact
           uses: actions/upload-artifact@v4
           with:
@@ -113,8 +107,7 @@ jobs:
             mingw-w64-x86_64-capstone
             mingw-w64-x86_64-zstd
             mingw-w64-x86_64-libssh
-            tar 
-            zip
+            mingw-w64-x86_64-7zip
             
       - name: Get distribution of QEMU
         shell: msys2 {0}
@@ -128,15 +121,15 @@ jobs:
         run: |
           cd qemu-${GITHUB_REF_NAME#"v"}
           ./configure --prefix=$(pwd)/qemu \
-                      --disable-bsd-user \
                       --disable-guest-agent \
-                      --enable-capstone \
-                      --enable-libssh \
-                      --enable-zstd \
+                      --enable-capstone
+                      --enable-strip \
                       --enable-gtk \
                       --enable-sdl
-          make install
-          zip -r qemu-win-x64.zip ./qemu
+          cd build
+          meson compile && meson install
+          cd ..
+          7z a qemu-win-x64.zip ./qemu
       - name: Upload the artifact
         uses: actions/upload-artifact@v4
         with:
@@ -150,10 +143,13 @@ jobs:
     steps:
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v4
+      - name: Generate CHECKSUMS
+        run: |
+          touch CHECKSUMS
+          echo "$(shasum -a 512 $GITHUB_WORKSPACE/qemu-mac-arm64.zip)" >> CHECKSUMS
+          echo "$(shasum -a 512 $GITHUB_WORKSPACE/qemu-linux-x64.zip)" >> CHECKSUMS
+          echo "$(shasum -a 512 $GITHUB_WORKSPACE/qemu-win-x64.zip)" >> CHECKSUMS
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1
         with:
-          files: |
-            qemu-mac-arm64.zip
-            qemu-linux-x64.zip
-            qemu-win-x64.zip
+          artifacts: "qemu-*.zip,CHECKSUMS"
