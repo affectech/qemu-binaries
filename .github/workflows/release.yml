@@ -34,8 +34,8 @@ jobs:
                         --disable-guest-agent \
                         --disable-sdl \
                         --disable-gtk \
+                        --disable-werror \
                         --enable-cocoa \
-                        --enable-capstone \
                         --enable-strip
                         
             gmake install
@@ -71,8 +71,7 @@ jobs:
             ./configure --prefix=$(pwd)/qemu \
                         --disable-guest-agent \
                         --enable-gtk \
-                        --enable-capstone \
-                        --enable-zstd \
+                        --disable-werror \
                         --enable-strip
                         
             make install
@@ -122,10 +121,8 @@ jobs:
           cd qemu-${GITHUB_REF_NAME#"v"}
           ./configure --prefix=$(pwd)/qemu \
                       --disable-guest-agent \
-                      --enable-capstone \
-                      --enable-strip \
-                      --enable-gtk \
-                      --enable-sdl
+                      --disable-werror \
+                      --enable-strip
           cd build
           meson compile && meson install
           cd ..
