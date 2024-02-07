@@ -73,7 +73,7 @@ jobs:
                         --disable-bsd-user \
                         --disable-guest-agent \ 
                         --enable-slirp \
-                        --enable-capstone \-
+                        --enable-capstone \
                         -enable-curses \
                         --enable-fdt=system \
                         --enable-libssh \ 
