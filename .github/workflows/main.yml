@@ -22,8 +22,12 @@ jobs:
           git config --local user.name "github-actions[bot]"
 
           export QEMU_TAG="$(bb ./check_and_get_tag.clj)"
-
-          git tag -a "v${QEMU_TAG}" -m "new release!"
+          
+          if [[ -n "$QEMU_TAG" ]]; then
+            git tag -a "$QEMU_TAG" -m "new release!"
+          else
+            exit 1
+          fi 
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
