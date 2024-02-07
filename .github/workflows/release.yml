@@ -70,10 +70,20 @@ jobs:
          run: |
            cd qemu-${GITHUB_REF_NAME#"v"}
            ./configure --prefix=$(pwd)/qemu \
-                       --disable-guest-agent \
-                       --enable-gtk \
-                       --disable-werror \
-                       --enable-strip
+                        --disable-bsd-user \
+                        --disable-guest-agent \ 
+                        --enable-slirp \
+                        --enable-capstone \-
+                        -enable-curses \
+                        --enable-fdt=system \
+                        --enable-libssh \ 
+                        --enable-vde \
+                        --enable-virtfs \ 
+                        --enable-zstd \
+                        --extra-cflags=-DNCURSES_WIDECHAR=1 \
+                        --disable-sdl \
+                        --enable-gtk \
+                        --enable-strip
                         
            cd build
            meson compile && meson install
