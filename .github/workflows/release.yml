@@ -151,10 +151,10 @@ jobs:
         run: |
           ls -R qemu
           touch CHECKSUMS
-          echo "$(shasum -a 512 $GITHUB_WORKSPACE/mac-arm64/qemu-mac-arm64.zip)" >> CHECKSUMS
-          echo "$(shasum -a 512 $GITHUB_WORKSPACE/linux-x64/qemu-linux-x64.zip)" >> CHECKSUMS
-          echo "$(shasum -a 512 $GITHUB_WORKSPACE/win64/qemu-win-x64.zip)" >> CHECKSUMS
+          echo "$(shasum -a 512 $GITHUB_WORKSPACE/qemu/qemu-${GITHUB_REF_NAME#"v"}/qemu-mac-arm64.zip)" >> CHECKSUMS
+          echo "$(shasum -a 512 $GITHUB_WORKSPACE/qemu/qemu-${GITHUB_REF_NAME#"v"}/qemu-linux-x64.zip)" >> CHECKSUMS
+          echo "$(shasum -a 512 $GITHUB_WORKSPACE/qemu/qemu-${GITHUB_REF_NAME#"v"}/qemu-win-x64.zip)" >> CHECKSUMS
       - name: Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "mac-arm64/qemu-mac-arm64.zip,linux-x64/qemu-linux-x64.zip,win64/qemu-win-x64.zip,CHECKSUMS"
+          artifacts: "qemu/qemu-*/qemu-*.zip,CHECKSUMS"
