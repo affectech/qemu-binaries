@@ -7,7 +7,7 @@
     nil))
 
 (if-let [resp (http/get 
-               "https://api.github.com/repos/ktzh/qemu-builds/tags?per_page=1" 
+               "https://api.github.com/repos/ktzh/qemu-binaries/tags?per_page=1" 
                {:as :text})]  
   (if-let [qemu-version (get-latest-qemu-version)]
     ; from the right side of =, we're getting the name key
