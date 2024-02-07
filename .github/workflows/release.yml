@@ -86,6 +86,7 @@ jobs:
                        --enable-kvm \
                        --disable-xen \
                        --disable-sdl \
+                       --disable-vnc-jpeg \
                        --enable-gtk \
                        --enable-strip
                         
