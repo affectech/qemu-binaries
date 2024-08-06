@@ -19,7 +19,8 @@ jobs:
                  libpng libslirp libssh libusb lzo make meson \
                  nettle ninja pixman pkg-config python@3.10 \
                  snappy spice-protocol vde zlib zstd p7zip
-        
+
+            pip3 install tomli
         - name: Fetch QEMU distribution
           run: |
             wget https://download.qemu.org/qemu-${GITHUB_REF_NAME#"v"}.tar.xz
@@ -54,7 +55,7 @@ jobs:
    steps:
        - name: Download dependencies
          run: |
-           sudo pip3 install meson
+           sudo pip3 install meson tomli
            sudo apt update
            sudo apt install git libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev ninja-build \
                             libaio-dev libbluetooth-dev libcapstone-dev libbrlapi-dev libbz2-dev \
@@ -122,6 +123,7 @@ jobs:
            mingw-w64-x86_64-SDL2 
            mingw-w64-x86_64-libslirp 
            mingw-w64-x86_64-meson
+           mingw-w64-x86_64-python-tomli
            mingw-w64-x86_64-capstone
            mingw-w64-x86_64-zstd
            mingw-w64-x86_64-libssh
